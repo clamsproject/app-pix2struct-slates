@@ -71,9 +71,9 @@ class Pix2structSlates(ClamsApp):
             "What is the total runtime of the program": "runtime"
         }
 
-        queries = query_to_label.keys()
+        queries = list(query_to_label.keys())
 
-        for timeframe in input_view.get_annotations(AnnotationTypes.TimeFrame, label="chyron"):
+        for timeframe in input_view.get_annotations(AnnotationTypes.TimeFrame, frameType="slate"):
             self.logger.debug(timeframe.properties)
             # get image from time frame
             image = vdh.extract_mid_frame(mmif, timeframe, as_PIL=True)
