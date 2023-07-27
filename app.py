@@ -68,6 +68,7 @@ class Pix2structSlates(ClamsApp):
         query_to_label = {
             "What is the title of the program": "title",
             "What date what is recorded": "rec_date",
+            "What date did it air": "air_date",
             "What is the total runtime of the program": "runtime"
         }
 
