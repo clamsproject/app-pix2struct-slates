@@ -35,21 +35,6 @@ class Pix2structSlates(ClamsApp):
         # When using the ``metadata.py`` leave this do-nothing "pass" method here.
         pass
 
-    @staticmethod
-    def vote(candidates: List[Iterable[Tuple[str, str]]]) -> Tuple[str, str]:
-        """
-        For each question, vote on the most common answer
-        :param candidates: completion candidates
-        :return: query and the most common answer
-        """
-        answers = []
-        query: str = ""
-        for candidate in candidates:
-            for query, answer in candidate:
-                query = query
-                answers.append(answer)
-        return query, max(set(answers), key=answers.count)
-
     def generate(self, img, questions):
         """
         Generate answers for a list of questions using the model
