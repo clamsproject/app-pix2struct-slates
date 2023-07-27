@@ -1,3 +1,12 @@
+"""
+Pix2structSlates runs the Pix2struct Doc-VQA model on timeframes from a MMIF containing a VideoDocument.
+It specifically runs the model on the slate of the video with queries about the slate text.
+These queries are:
+    - What is the title of the program
+    - What date was it recorded
+    - What date did it air
+    - What is the total runtime of the program
+"""
 import argparse
 import logging
 from typing import Union, List, Dict, Tuple, Iterable
@@ -67,7 +76,7 @@ class Pix2structSlates(ClamsApp):
 
         query_to_label = {
             "What is the title of the program": "title",
-            "What date what is recorded": "rec_date",
+            "What date was is recorded": "rec_date",
             "What date did it air": "air_date",
             "What is the total runtime of the program": "runtime"
         }

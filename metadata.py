@@ -21,15 +21,12 @@ def appmetadata() -> AppMetadata:
     :return: AppMetadata object holding all necessary information.
     """
     
-    # first set up some basic information
     metadata = AppMetadata(
         name="Pix2struct Slates",
         description="Run Pix2Struct slate queries on input timeframes",
         app_license="MIT",
         identifier="pix2struct-slates",
         url="https://github.com/clamsproject/app-pix2struct-slates",
-        # (if you are on the CLAMS team, this MUST be "https://github.com/clamsproject/app-pix2struct-slates"
-        # (see ``.github/README.md`` file in this directory for the reason)
         analyzer_version='1',
         analyzer_license="Apache-2.0",
     )
