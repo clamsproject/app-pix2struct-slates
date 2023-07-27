@@ -1,4 +1,5 @@
 import argparse
+import logging
 from typing import Union, List, Dict, Tuple, Iterable
 
 # mostly likely you'll need these modules/classes
@@ -11,7 +12,7 @@ from transformers import Pix2StructForConditionalGeneration as psg
 from transformers import Pix2StructProcessor as psp
 
 
-class Pix2structDocvqaWrapper(ClamsApp):
+class Pix2structSlates(ClamsApp):
 
     def __init__(self):
         super().__init__()
@@ -64,40 +65,19 @@ class Pix2structDocvqaWrapper(ClamsApp):
             document=video_doc.id,
         )
 
-        queries = [
-            "What is the name of the program",
-            "What date what is recorded",
-            "What is the total runtime of the program"
-        ]
-
         query_to_label = {
-            "What is the name of the program": "program_name",
+            "What is the title of the program": "title",
             "What date what is recorded": "rec_date",
             "What is the total runtime of the program": "runtime"
         }
 
+        queries = query_to_label.keys()
+
         for timeframe in input_view.get_annotations(AnnotationTypes.TimeFrame, label="chyron"):
-            print(timeframe.properties)
-            # get images from time frame
-            if config["sampleFrames"] == 1:
-                image = vdh.extract_mid_frame(mmif, timeframe, as_PIL=True)
-                completions = self.generate(image, queries)
-            else:
-                timeframe_length = int(timeframe.properties["end"] - timeframe.properties["start"])
-                sample_frames = config["sampleFrames"]
-                if timeframe_length < sample_frames:
-                    sample_frames = int(timeframe_length)
-                sample_ratio = int(timeframe.properties["start"]
-                                   + timeframe.properties["end"]) // sample_frames
-                tf_sample = vdh.sample_frames(timeframe.properties["start"], timeframe.properties["end"],
-                                              sample_ratio)
-                images = vdh.extract_frames_as_images(video_doc, tf_sample)
-                completions = []
-                for query in queries:
-                    candidates = []
-                    for image in images:
-                        candidates.append(self.generate(image, query))
-                    completions.append(self.vote(candidates))
+            self.logger.debug(timeframe.properties)
+            # get image from time frame
+            image = vdh.extract_mid_frame(mmif, timeframe, as_PIL=True)
+            completions = self.generate(image, queries)
 
             for query, answer in completions:
                 print(f"query: {query} answer: {answer}")
@@ -115,21 +95,21 @@ class Pix2structDocvqaWrapper(ClamsApp):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--port", action="store", default="5000", help="set port to listen"
-    )
+    parser.add_argument("--port", action="store", default="5000", help="set port to listen")
     parser.add_argument("--production", action="store_true", help="run gunicorn server")
-    # more arguments as needed
+    # add more arguments as needed
     # parser.add_argument(more_arg...)
 
     parsed_args = parser.parse_args()
 
     # create the app instance
-    app = Pix2structDocvqaWrapper()
+    app = Pix2structSlates()
 
     http_app = Restifier(app, port=int(parsed_args.port))
-
+    # for running the application in production mode
     if parsed_args.production:
         http_app.serve_production()
+    # development mode
     else:
+        app.logger.setLevel(logging.DEBUG)
         http_app.run()
