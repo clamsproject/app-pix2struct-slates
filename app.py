@@ -9,11 +9,11 @@ These queries are:
 """
 import argparse
 import logging
-from typing import Union, List, Dict, Tuple, Iterable
+from typing import Union
 
 # mostly likely you'll need these modules/classes
 from clams import ClamsApp, Restifier
-from mmif import Mmif, View, Annotation, Document, AnnotationTypes, DocumentTypes
+from mmif import Mmif, View, Document, AnnotationTypes, DocumentTypes
 from mmif.utils import video_document_helper as vdh
 
 import torch
@@ -26,7 +26,8 @@ class Pix2structSlates(ClamsApp):
     def __init__(self):
         super().__init__()
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = psg.from_pretrained("google/pix2struct-docvqa-base").to(self.device)
+        self.model = psg.from_pretrained("google/pix2struct-docvqa-base",
+                                         revision="4dde85b6b60b3765bb1e50c089828f7b0b2f999d").to(self.device)
         self.processor = psp.from_pretrained("google/pix2struct-docvqa-base")
 
     def _appmetadata(self):
@@ -55,7 +56,7 @@ class Pix2structSlates(ClamsApp):
         new_view: View = mmif.new_view()
         self.sign_view(new_view, parameters)
         new_view.new_contain(
-            AnnotationTypes.Relation,
+            AnnotationTypes.Alignment,
             document=video_doc.id,
         )
 

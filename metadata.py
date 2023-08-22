@@ -32,6 +32,7 @@ def appmetadata() -> AppMetadata:
     )
     # and then add I/O specifications: an app must have at least one input and one output
     metadata.add_input(DocumentTypes.VideoDocument)
+    metadata.add_input(AnnotationTypes.TimeFrame, frameType="slate")
     metadata.add_output(DocumentTypes.TextDocument)
     metadata.add_output(AnnotationTypes.Alignment)
 
